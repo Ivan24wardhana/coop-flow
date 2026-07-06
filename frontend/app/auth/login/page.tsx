@@ -40,20 +40,26 @@ export default function LoginPage() {
       const response = await api.post("/login", { email, password });
       const { access_token, user } = response.data;
 
+      // 1. Simpan data ke LocalStorage untuk Client-Side State
       localStorage.setItem("access_token", access_token);
       localStorage.setItem("user_profile", JSON.stringify(user));
 
+      // 2. Ambil semua role dari user
+      const userRoles = user.roles?.map((r: any) => r.name) || [];
+      
+      // Ambil role utama (elemen pertama) untuk disimpan di cookie middleware
+      const primaryRole = userRoles[0] || ""; 
+
+      // 3. Simpan access_token DAN user_role ke Cookies agar terbaca oleh Middleware
       document.cookie = `access_token=${access_token}; path=/; max-age=86400; SameSite=Lax;`;
+      document.cookie = `user_role=${primaryRole}; path=/; max-age=86400; SameSite=Lax;`;
 
       Toast.fire({
         icon: "success",
         title: "Login Berhasil! Selamat datang.",
       });
 
-      // AMBIL SEMUA ROLE DARI USER
-      const userRoles = user.roles?.map((r: any) => r.name) || [];
-
-      // REDIRECT BERDASARKAN ROLE SEEDER
+      // 4. REDIRECT BERDASARKAN ROLE SEEDER
       if (userRoles.includes("admin-lapangan")) {
         router.push("/dashboard/admin-lapangan");
       } else if (userRoles.includes("petugas-koperasi")) {
@@ -65,7 +71,6 @@ export default function LoginPage() {
       } else if (userRoles.includes("petani")) {
         router.push("/dashboard/petani");
       } else {
-        // Fallback jika tidak ada role yang cocok
         router.push("/dashboard");
       }
 

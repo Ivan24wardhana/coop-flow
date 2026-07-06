@@ -7,10 +7,14 @@ import Sidebar from "../../components/dashboard/Sidebar";
 import Navbar from "../../components/dashboard/Navbar";
 import OverviewContent from "../../components/cooperative/OverViewContent";
 import api from "../../lib/axios"; 
+import { useAuthAction } from "@/app/hooks/useAuthAction"; 
 
 export default function AdminKoperasiDashboardPage() {
   const router = useRouter();
   const [adminName] = useState("Pengurus Koperasi");
+  
+  // 2. Inisialisasi fungsi logout dari hook
+  const { logout } = useAuthAction(); 
 
   // State untuk menampung data dari Laravel Docker
   const [metricsData, setMetricsData] = useState({
@@ -59,19 +63,17 @@ export default function AdminKoperasiDashboardPage() {
     fetchDashboardData();
   }, []);
 
-  const handleLogout = () => {
-    console.log("User keluar dari aplikasi");
-  };
-
   return (
     <div className="flex min-h-screen bg-[#f8fafc] text-zinc-800 antialiased font-sans">
-      <Sidebar handleLogout={handleLogout} />
+      {/* 3. Pasang fungsi logout ke Sidebar */}
+      <Sidebar handleLogout={logout} />
 
       <div className="flex-1 flex flex-col pb-12">
+        {/* 4. Pasang fungsi logout ke Navbar */}
         <Navbar
           adminName={adminName}
           roleName="Admin Koperasi"
-          handleLogout={handleLogout}
+          handleLogout={logout}
         />
 
         <div className="w-full px-6 md:px-10 mt-8">

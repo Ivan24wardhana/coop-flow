@@ -11,7 +11,7 @@ import {
 
 interface NavbarProps {
   adminName: string;
-  roleName: string; // Hapus tanda tanya (?) agar parameter ini bersifat WAJIB (Required)
+  roleName: string;
   handleLogout: () => void;
 }
 
@@ -38,7 +38,7 @@ export default function Navbar({
   }, []);
 
   return (
-    <header className="h-20 bg-white border-b border-zinc-100 flex items-center justify-between px-6 lg:px-12 sticky top-0 z-50 shadow-sm shadow-zinc-100/50">
+    <header className="h-18 bg-[#107349] border-b border-green-700 flex items-center justify-between px-6 lg:px-12 sticky top-0 z-50 shadow-sm shadow-zinc-100/50">
       {/* Kiri: Logo & Nama App */}
       <div className="flex items-center space-x-3">
         <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 p-1.5 shadow-md shadow-emerald-100">
@@ -49,29 +49,20 @@ export default function Navbar({
           />
         </div>
         <div>
-          <span className="font-extrabold text-lg tracking-tight text-zinc-900 block leading-none">
+          <span className="font-extrabold text-lg tracking-tight text-white block leading-none">
             COOP-FLOW
           </span>
-          {/* Tampilan warna lencana dinamis berdasarkan role */}
-          <span
-            className={`text-xs font-semibold mt-1 block px-2 py-0.5 rounded-md border w-max ${
-              roleName === "Admin Lapangan"
-                ? "bg-blue-50 text-blue-600 border-blue-100"
-                : "bg-emerald-50 text-emerald-600 border-emerald-100"
-            }`}
-          >
-            {roleName}
-          </span>
+         
         </div>
       </div>
 
       {/* Tengah: Search Bar */}
-      <div className="hidden md:flex items-center flex-1 max-w-md mx-8 relative">
+      <div className="hidden md:flex items-center flex-1 max-w-lg mx-8 relative">
         <FaSearch className="absolute left-4 text-zinc-400 text-sm" />
         <input
           type="text"
           placeholder="Cari petani, lahan, transaksi..."
-          className="w-full bg-[#f4f4f5] text-sm text-zinc-700 pl-11 pr-4 py-2.5 rounded-full border border-transparent focus:outline-none focus:bg-white focus:border-zinc-200 transition-all duration-200 placeholder:text-zinc-400"
+          className="w-full bg-[#f4f4f5] text-sm text-zinc-700 pl-11 pr-4 py-1.5 rounded-full border border-transparent focus:outline-none focus:bg-white focus:border-zinc-200 transition-all duration-200 placeholder:text-zinc-400"
         />
       </div>
 
@@ -84,7 +75,7 @@ export default function Navbar({
             <p className="text-[10px] text-zinc-400">Terakhir: Baru saja</p>
           </div>
         </div>
-        <button className="relative p-2 text-zinc-400 hover:text-zinc-700 rounded-full hover:bg-zinc-50 transition">
+        <button className="relative p-2 text-yellow-500 hover:text-yellow-700 rounded-full hover:bg-zinc-50 transition">
           <FaBell className="text-xl" />
           <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-[9px] font-extrabold text-white rounded-full flex items-center justify-center ring-2 ring-white">
             2
@@ -102,10 +93,10 @@ export default function Navbar({
               className="h-9 w-9 rounded-full object-cover border border-zinc-200 shadow-sm"
             />
             <div className="text-left hidden sm:block">
-              <p className="text-sm font-bold text-zinc-800 leading-tight transition">
+              <p className="text-sm font-bold text-white leading-tight transition">
                 {adminName}
               </p>
-              <p className="text-[11px] font-medium text-zinc-400 mt-0.5">
+              <p className="text-[11px] font-medium text-zinc-200 mt-0.5">
                 {roleName}
               </p>
             </div>

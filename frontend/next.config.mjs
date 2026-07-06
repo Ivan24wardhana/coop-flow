@@ -1,6 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  /* konfigurasi bawaan kamu jika ada */
+  async redirects() {
+    return [
+      {
+        source: '/dashboard',
+        destination: '/auth/login',
+        permanent: true, 
+      },
+    ];
+  },
 };
 
-export default nextConfig;
+export default nextConfig; 

@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation"; // Untuk mendeteksi halaman aktif secara otomatis
+import { usePathname } from "next/navigation"; 
 import {
   FaChartPie,
   FaBoxes,

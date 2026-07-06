@@ -210,7 +210,7 @@ export default function ValidasiLahanPage() {
 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-zinc-800 antialiased font-sans pb-12">
-      <Navbar adminName={adminName} handleLogout={() => router.push('/auth/login')} />
+      <Navbar adminName={adminName} roleName="admin-lapangan" handleLogout={() => router.push('/auth/login')} />
 
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-13 mt-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
