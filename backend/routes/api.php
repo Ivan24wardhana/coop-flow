@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\ParcelController;
 use App\Http\Controllers\FarmerController; 
 use App\Http\Controllers\FarmerGroupController;
 use App\Http\Controllers\PlantController;
+use App\Http\Controllers\RegionalController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\CooperativeDashboardController;
@@ -46,6 +47,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('plants', PlantController::class);
 
     Route::post('/parcels', [ParcelController::class, 'store']); 
+
+    // endpoint untuk region manage automatically
+    Route::get('/regional/provinces', [RegionalController::class, 'getProvinces']);
+    Route::get('/regional/provinces/{province_id}/cities', [RegionalController::class, 'getCities']);
+    Route::get('/regional/cities/{city_id}/districts', [RegionalController::class, 'getDistricts']);
+    Route::get('/regional/districts/{district_id}/villages', [RegionalController::class, 'getVillages']);
+
+    // endpoiin khusus hapus lahan tunggal
+    Route::delete('/farmers/lands/{landId}', [FarmerController::class, 'destroyLand']);
 
     // untuk dasboard admin koprasi
     Route::get('/cooperative/dashboard', [CooperativeDashboardController::class, 'getKoperasiData']);

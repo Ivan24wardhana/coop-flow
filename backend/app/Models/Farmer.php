@@ -15,6 +15,10 @@ class Farmer extends Model
         'user_id',
         'farmer_group_id',
         'nik',
+        'province_id', 
+        'city_id',     
+        'district_id', 
+        'village_id',  
         'total_land_area',
         'notes',
     ];

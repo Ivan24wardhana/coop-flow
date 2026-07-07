@@ -41,6 +41,7 @@ export interface Farmer {
   };
   lands?: Land[];
   status?: string; 
+  district_id?: string; 
 }
 
 export default function ValidasiLahanPage() {

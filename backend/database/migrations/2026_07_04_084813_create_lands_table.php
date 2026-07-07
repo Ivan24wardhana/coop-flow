@@ -12,9 +12,25 @@ return new class extends Migration
             $table->id();
             $table->foreignId('farmer_id')->constrained('farmers')->onDelete('cascade');
             $table->string('land_name'); 
+            
+            $table->char('province_id', 2)->nullable();
+            $table->char('city_id', 4)->nullable();
+            $table->char('district_id', 7)->nullable();
+            $table->char('village_id', 10)->nullable();
+
             $table->decimal('area', 8, 2); 
+            $table->string('unit')->default('Ha'); 
+            
+            $table->enum('status', ['Milik Sendiri', 'Sewa', 'Bagi Hasil', 'Lainnya'])->default('Milik Sendiri');
+            
+            $table->string('current_use')->nullable(); 
+            $table->string('soil_type')->nullable(); 
+            $table->string('water_source')->nullable(); 
+            $table->string('irrigation_type')->nullable(); 
+            $table->string('ownership_document')->nullable(); 
+
             $table->text('location_address')->nullable(); 
-            $table->json('polygon_coordinates')->nullable();  
+            $table->json('polygon_coordinates')->nullable(); 
             
             $table->timestamps();
         });

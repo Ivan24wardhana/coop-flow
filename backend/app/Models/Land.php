@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Land extends Model
 {
@@ -12,7 +14,18 @@ class Land extends Model
     protected $fillable = [
         'farmer_id',
         'land_name',
+        'province_id', 
+        'city_id',          
+        'district_id',      
+        'village_id',       
         'area',
+        'unit',               
+        'status',           
+        'current_use',        
+        'soil_type',          
+        'water_source',     
+        'irrigation_type',     
+        'ownership_document', 
         'location_address',
         'polygon_coordinates', 
     ];
@@ -21,12 +34,18 @@ class Land extends Model
         'polygon_coordinates' => 'array',
     ];
 
-    public function farmer()
+    /**
+     * Relasi ke model Farmer
+     */
+    public function farmer(): BelongsTo
     {
         return $this->belongsTo(Farmer::class);
     }
 
-    public function plants()
+    /**
+     * Relasi ke model Plant (Tanaman)
+     */
+    public function plants(): HasMany
     {
         return $this->hasMany(Plant::class);
     }
