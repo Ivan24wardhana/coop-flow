@@ -1,12 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { FaSearch, FaFilter, FaCloudUploadAlt } from 'react-icons/fa';
+import { Farmer } from '@/app/dashboard/admin-lapangan/validasi-lahan/page';
 
 interface ValidationFilterFormProps {
   searchTerm: string;
   setSearchTerm: (val: string) => void;
   uniqueGroups: { id: number; name: string }[];
+  farmers: Farmer[]; // Menerima data farmers dari parent component
   activeTab: 'belum' | 'sudah';
   setActiveTab: (tab: 'belum' | 'sudah') => void;
   onApplyFilters: (filters: {
@@ -23,12 +25,13 @@ export default function ValidationFilterForm({
   searchTerm,
   setSearchTerm,
   uniqueGroups,
+  farmers,
   activeTab,
   setActiveTab,
   onApplyFilters,
   onSync
 }: ValidationFilterFormProps) {
-  const [isFilterOpen, setIsFilterOpen] = useState(true);
+ const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   // Filter local state
   const [status, setStatus] = useState('Semua Status');
@@ -36,6 +39,29 @@ export default function ValidationFilterForm({
   const [group, setGroup] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+
+  // --- MEMBACA DATA DESA SECARA DINAMIS DARI OBJECT VILLAGE API ---
+  const uniqueWilayah = useMemo(() => {
+    const maps = new Map<string, string>();
+
+    farmers.forEach((farmer) => {
+      const villageData = farmer.village;
+      
+      if (villageData && villageData.code) {
+        const villageCode = villageData.code.trim();
+        const villageName = villageData.name ? `Desa ${villageData.name}` : `Kode Desa (${villageCode})`;
+        
+        // Menggunakan Map agar data kode desa yang kembar otomatis tersaring (unique)
+        maps.set(villageCode, villageName);
+      } else if (farmer.village_id) {
+        // Fallback jika objek relasi village kosong namun village_id utama terisi
+        maps.set(farmer.village_id.trim(), `Kode Desa: ${farmer.village_id}`);
+      }
+    });
+
+    // Mengubah Map kembali ke format Array objek [{ id: '3402082001', name: 'Desa PALBAPANG' }]
+    return Array.from(maps.entries()).map(([id, name]) => ({ id, name }));
+  }, [farmers]);
 
   const handleApply = () => {
     onApplyFilters({ status, wilayah, group, startDate, endDate });
@@ -53,7 +79,7 @@ export default function ValidationFilterForm({
   };
 
   return (
-    <div className="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm space-y-4 w-full box-border">
+    <div className="bg-white p-5 rounded-2xl border border-zinc-100 shadow-sm space-y-4 w-full box-border">
       {/* BARIS UTAMA */}
       <div className="flex flex-col md:flex-row items-center gap-3 w-full">
         <div className="relative flex-1 w-full">
@@ -105,14 +131,19 @@ export default function ValidationFilterForm({
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 mb-1.5">Wilayah</label>
+              <label className="block text-xs font-semibold text-zinc-400 mb-1.5">Wilayah (Desa)</label>
               <select 
                 value={wilayah} 
                 onChange={(e) => setWilayah(e.target.value)}
                 className="w-full border border-zinc-200 bg-white rounded-xl p-2.5 text-xs font-medium text-zinc-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none cursor-pointer"
               >
-                <option value="">Semua Wilayah</option>
-                <option value="340208 ">Kec. Bambanglipuro (340208)</option>
+                <option value="">Semua Desa / Wilayah</option>
+                {/* MERENDER DATA WILAYAH DESA SECARA DINAMIS */}
+                {uniqueWilayah.map((w) => (
+                  <option key={w.id} value={w.id}>
+                    {w.name}
+                  </option>
+                ))}
               </select>
             </div>
 

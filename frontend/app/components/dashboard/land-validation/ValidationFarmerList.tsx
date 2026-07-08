@@ -32,7 +32,7 @@ export default function ValidationFarmerList({
   // State filter yang telah diaplikasikan
   const [appliedFilters, setAppliedFilters] = useState({
     status: 'Semua Status',
-    wilayah: '',
+    wilayah: '', // Menyimpan kode desa (village.code) secara dinamis
     group: '',
     startDate: '',
     endDate: ''
@@ -62,7 +62,10 @@ export default function ValidationFarmerList({
       const name = f.user?.name || '';
       const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase()) || f.nik.includes(searchTerm);
       const matchesGroup = !appliedFilters.group || f.farmer_group?.id === Number(appliedFilters.group);
-      const matchesWilayah = !appliedFilters.wilayah || f.district_id === appliedFilters.wilayah;
+      
+      // PERBAIKAN DI SINI: Mencocokkan filter wilayah dengan kode desa dinamis dari objek village
+      const farmerVillageCode = f.village?.code?.trim() || f.village_id?.trim() || '';
+      const matchesWilayah = !appliedFilters.wilayah || farmerVillageCode === appliedFilters.wilayah.trim();
 
       return matchesSearch && matchesGroup && matchesWilayah;
     });
@@ -86,6 +89,7 @@ export default function ValidationFarmerList({
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
         uniqueGroups={uniqueGroups}
+        farmers={farmers} // <-- PERBAIKAN: Menambahkan props farmers di sini
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         onApplyFilters={setAppliedFilters}

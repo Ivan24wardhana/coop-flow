@@ -14,14 +14,14 @@ use Illuminate\Support\Facades\Storage;
 class FarmerController extends Controller
 {
     public function index()
-    {
-        $farmers = Farmer::with(['user', 'farmer_group', 'lands.plants'])->latest()->get();
+{
+    $farmers = Farmer::with(['user', 'farmer_group', 'lands.plants', 'village'])->latest()->get();
 
-        return response()->json([
-            'success' => true,
-            'data' => $farmers
-        ], 200);
-    }
+    return response()->json([
+        'success' => true,
+        'data' => $farmers
+    ], 200);
+}
 
     public function store(Request $request)
     {
@@ -157,19 +157,19 @@ class FarmerController extends Controller
         }
     }
 
-    public function show($id)
-    {
-        $farmer = Farmer::with(['user', 'farmer_group', 'lands.plants'])->find($id);
+public function show($id)
+{
+    $farmer = Farmer::with(['user', 'farmer_group', 'lands.plants', 'village'])->find($id);
 
-        if (!$farmer) {
-            return response()->json(['message' => 'Petani tidak ditemukan'], 404);
-        }
-
-        return response()->json([
-            'success' => true,
-            'data' => $farmer
-        ], 200);
+    if (!$farmer) {
+        return response()->json(['message' => 'Petani tidak ditemukan'], 404);
     }
+
+    return response()->json([
+        'success' => true,
+        'data' => $farmer
+    ], 200);
+}
 
     public function update(Request $request, $id)
     {
@@ -306,7 +306,7 @@ class FarmerController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Data profil petani dan hasil mapping lahan berhasil diperbarui!',
-                'data' => $farmer->load(['user', 'farmer_group', 'lands.plants'])
+                'data' => $farmer->load(['user', 'farmer_group', 'lands.plants', 'village'])
             ], 200);
 
         } catch (\Exception $e) {

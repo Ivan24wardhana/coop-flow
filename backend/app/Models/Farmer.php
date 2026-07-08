@@ -46,4 +46,9 @@ class Farmer extends Model
     {
         return $this->hasMany(Land::class);
     }
+
+    public function village()
+    {
+        return $this->belongsTo(\Laravolt\Indonesia\Models\Village::class, 'village_id', 'code');
+    }
 }

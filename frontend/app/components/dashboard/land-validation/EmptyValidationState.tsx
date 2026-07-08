@@ -5,7 +5,7 @@ import { FaMap } from 'react-icons/fa';
 
 export default function EmptyValidationState() {
   return (
-    <div className="bg-white border border-dashed border-zinc-200 rounded-3xl p-12 text-center h-full flex flex-col items-center justify-center min-h-[450px] shadow-sm">
+    <div className="text-center h-full flex flex-col items-center justify-center min-h-[450px]">
       <div className="p-4 bg-green-50 text-green-600 rounded-2xl mb-4 shadow-inner">
         <FaMap className="text-3xl" />
       </div>

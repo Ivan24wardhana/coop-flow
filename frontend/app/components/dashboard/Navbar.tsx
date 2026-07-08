@@ -57,14 +57,14 @@ export default function Navbar({
       </div>
 
       {/* Tengah: Search Bar */}
-      <div className="hidden md:flex items-center flex-1 max-w-lg mx-8 relative">
+      {/* <div className="hidden md:flex items-center flex-1 max-w-lg mx-8 relative">
         <FaSearch className="absolute left-4 text-zinc-400 text-sm" />
         <input
           type="text"
           placeholder="Cari petani, lahan, transaksi..."
           className="w-full bg-[#f4f4f5] text-sm text-zinc-700 pl-11 pr-4 py-1.5 rounded-full border border-transparent focus:outline-none focus:bg-white focus:border-zinc-200 transition-all duration-200 placeholder:text-zinc-400"
         />
-      </div>
+      </div> */}
 
       {/* Kanan: Sinkronisasi, Notifikasi & Profil */}
       <div className="flex items-center space-x-5">

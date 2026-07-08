@@ -19,17 +19,27 @@ export interface Land {
   area: string | number;
   location_address?: string;
   polygon_coordinates?: [number, number][]; 
+  village_id?: string; 
+  province_id?: string;
+  city_id?: string;
+  district_id?: string;
 }
 
+// Tambahkan properti village ke dalam interface Farmer Anda yang sudah ada
 export interface Farmer {
   id: number;
   user_id: number;
+  farmer_group_id?: number; 
   farmer_group?: {      
     id: number;
     name: string;
     description?: string;
   };
   nik: string;
+  province_id?: string;  
+  city_id?: string;      
+  district_id?: string;  
+  village_id?: string;   
   total_land_area: string | number;
   notes?: string;
   user?: {
@@ -37,11 +47,21 @@ export interface Farmer {
     name: string;
     email: string;
     phone: string;
-    address: string;
+    address: string | null;
   };
   lands?: Land[];
   status?: string; 
-  district_id?: string; 
+  // --- TAMBAHKAN INI ---
+  village?: {
+    id: string;
+    code: string;
+    name: string;
+    meta?: {
+      lat: string;
+      long: string;
+      pos: string;
+    }
+  };
 }
 
 export default function ValidasiLahanPage() {
@@ -209,99 +229,92 @@ export default function ValidasiLahanPage() {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-[#f8fafc] text-zinc-800 antialiased font-sans pb-12">
-      <Navbar adminName={adminName} roleName="admin-lapangan" handleLogout={() => router.push('/auth/login')} />
+return (
+  <div className="min-h-screen bg-[#f8fafc] text-zinc-800 antialiased font-sans pb-12">
+    <Navbar adminName={adminName} roleName="admin-lapangan" handleLogout={() => router.push('/auth/login')} />
 
-      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-13 mt-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-          <div className="flex items-center gap-3">
-            <button 
-              onClick={() => router.push('/dashboard/admin-lapangan')}
-              className="p-2.5 bg-white border border-zinc-200 rounded-xl text-zinc-500 hover:text-zinc-800 shadow-sm transition"
-            >
-              <FaArrowLeft className="text-sm" />
-            </button>
-            <div>
-              <h1 className="text-xl font-extrabold text-zinc-900 tracking-tight">Validasi Lahan Geospasial</h1>
-              <p className="text-xs text-zinc-500 font-medium">Filter lahan belum atau sudah dimapping sebelum melakukan validasi fisik</p>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-100 text-emerald-700 px-3 py-1.5 rounded-xl text-xs font-semibold shadow-sm">
-            <FaWifi />
-            <span>Koneksi Server Aktif</span>
+    <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-13 mt-6">
+      {/* TOPBAR HEADER */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={() => router.push('/dashboard/admin-lapangan')}
+            className="p-2.5 bg-white border border-zinc-200 rounded-xl text-zinc-500 hover:text-zinc-800 shadow-sm transition cursor-pointer"
+          >
+            <FaArrowLeft className="text-sm" />
+          </button>
+          <div>
+            <h1 className="text-xl font-extrabold text-zinc-900 tracking-tight">Validasi Lahan Geospasial</h1>
+            <p className="text-xs text-zinc-500 font-medium">Filter lahan belum atau sudah dimapping sebelum melakukan validasi fisik</p>
           </div>
         </div>
-
-        {/* PERBAIKAN GRID: Menambahkan items-start agar kolom kiri & kanan tidak memanjang liar bersamaan */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* Panel Kiri */}
-          <div className="lg:col-span-5">
-            <ValidationFarmerList 
-              farmers={farmers}
-              selectedFarmer={selectedFarmer}
-              selectedLand={selectedLand}
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-              onSelectLand={handleSelectLandForMapping}
-              activeTab={activeTab}
-              setActiveTab={handleTabChange} 
-            />
-          </div>
-
-          {/* Panel Kanan */}
-          <div className="lg:col-span-7 flex flex-col gap-4">
-            
-            {/* Target Header Info Lahan Aktif */}
-            {selectedFarmer && selectedLand && (
-              <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-2xl text-xs font-semibold shadow-sm flex justify-between items-center animate-fade-in">
-                <span>Target Pemetaan: <strong>{selectedFarmer.user?.name}</strong> — {selectedLand.land_name} ({selectedLand.area} Ha)</span>
-                <button 
-                  onClick={() => { setSelectedFarmer(null); setSelectedLand(null); setPolygonCoordinates([]); }} 
-                  className="text-zinc-400 hover:text-zinc-700 text-xs bg-white px-2 py-1 rounded-md border border-zinc-200 shadow-sm"
-                >
-                  Batal / Selesai Lihat
-                </button>
-              </div>
-            )}
-
-            {/* PERBAIKAN CONTEXT: Membungkus peta dalam ketinggian statis agar tidak memakan ruang ke bawah */}
-            <div className="w-full rounded-2xl overflow-hidden border border-zinc-100 shadow-sm min-h-[400px] h-[480px] relative">
-              <MapWorkspace 
-                onPolygonChange={handlePolygonUpdate} 
-                initialPolygon={polygonCoordinates} 
-                allFarmersData={farmers} 
-                selectedLandId={selectedLand?.id || null} 
-                onSelectLandDirectly={handleSelectLandForMapping}
-                activeTab={activeTab} 
-                onTriggerReMapping={() => {
-                  isReMappingRef.current = true; 
-                  setActiveTab('belum');        
-                }}
-              />
-            </div>
-
-            {/* FORM VALIDASI ATAU EMPTY STATE */}
-            <div className="w-full">
-              {selectedFarmer && selectedLand ? (
-                <ValidationForm 
-                  selectedFarmer={selectedFarmer}
-                  selectedLand={selectedLand}
-                  areaHectares={areaHectares}
-                  setAreaHectares={setAreaHectares}
-                  plantingDate={plantingDate}
-                  setPlantingDate={setPlantingDate}
-                  onSubmit={handleSaveMapping}
-                  onCancel={() => { setSelectedFarmer(null); setSelectedLand(null); setPolygonCoordinates([]); }}
-                />
-              ) : (
-                <EmptyValidationState />
-              )}
-            </div>
-          </div>
+        
+        <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-100 text-emerald-700 px-3 py-1.5 rounded-xl text-xs font-semibold shadow-sm self-start sm:self-auto">
+          <FaWifi />
+          <span>Koneksi Server Aktif</span>
         </div>
       </div>
+
+      {/* MAIN WORKSPACE GRID */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+        
+        {/* PANEL KIRI: DAFTAR PETANI (Lebar 5 Kolom) */}
+        <div className="lg:col-span-5 sticky top-6">
+          <ValidationFarmerList 
+            farmers={farmers}
+            selectedFarmer={selectedFarmer}
+            selectedLand={selectedLand}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            onSelectLand={handleSelectLandForMapping}
+            activeTab={activeTab}
+            setActiveTab={handleTabChange} 
+          />
+        </div>
+
+{/* PANEL KANAN: WORKSPACE AREA */}
+<div className="lg:col-span-7">
+  {selectedFarmer && selectedLand ? (
+    <div className="flex flex-col space-y-4 bg-white border p-6 shadow-sm  border-zinc-100 rounded-2xl">
+      <ValidationForm 
+        selectedFarmer={selectedFarmer}
+        selectedLand={selectedLand}
+        areaHectares={areaHectares}
+        setAreaHectares={setAreaHectares}
+        plantingDate={plantingDate}
+        setPlantingDate={setPlantingDate}
+        onSubmit={handleSaveMapping}
+        onCancel={() => { setSelectedFarmer(null); setSelectedLand(null); setPolygonCoordinates([]); }}
+        
+        mapWorkspaceComponent={
+          <MapWorkspace 
+            onPolygonChange={handlePolygonUpdate} 
+            initialPolygon={polygonCoordinates} 
+            allFarmersData={farmers} 
+            selectedLandId={selectedLand?.id || null} 
+            onSelectLandDirectly={handleSelectLandForMapping}
+            activeTab={activeTab} 
+            calculatedAreaText={areaHectares}
+            onTriggerReMapping={() => {
+              isReMappingRef.current = true; 
+              setActiveTab('belum');        
+            }}
+            onSave={handleSaveMapping}
+            onCancel={() => { setSelectedFarmer(null); setSelectedLand(null); setPolygonCoordinates([]); }}
+          />
+        }
+      />
     </div>
-  );
+  ) : (
+    /* State Kosong saat belum pilih data lahan */
+    <div className="w-full rounded-2xl bg-white shadow-sm p-8.5 min-h-[400px] flex items-center justify-center text-center">
+      <EmptyValidationState />
+    </div>
+  )}
+</div>
+
+      </div>
+    </div>
+  </div>
+);
 }
