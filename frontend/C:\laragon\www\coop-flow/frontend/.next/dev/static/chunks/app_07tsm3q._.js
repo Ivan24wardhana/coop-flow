@@ -595,10 +595,15 @@ function DashboardOverviewPage() {
                 try {
                     const response = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$lib$2f$axios$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get("/cooperative/dashboard");
                     if (response.data.success) {
-                        setMetricsData(response.data.data);
+                        const backendData = response.data.data;
+                        // 💡 SOLUSI: Gabungkan objek 'metrics' dan 'chartData' ke dalam satu objek tingkat atas
+                        setMetricsData({
+                            ...backendData.metrics,
+                            chartData: backendData.chartData
+                        });
                     }
                 } catch (error) {
-                    console.error(error);
+                    console.error("Gagal mengambil data dashboard:", error);
                 } finally{
                     setIsLoading(false);
                 }
@@ -607,18 +612,18 @@ function DashboardOverviewPage() {
         }
     }["DashboardOverviewPage.useEffect"], []);
     if (isLoading) return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "py-20 text-center",
+        className: "py-20 text-center font-medium text-zinc-500 animate-pulse",
         children: "Sinkronisasi data ekosistem..."
     }, void 0, false, {
         fileName: "[project]/app/dashboard/admin-koprasi/page.tsx",
-        lineNumber: 35,
+        lineNumber: 41,
         columnNumber: 7
     }, this);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$components$2f$cooperative$2f$OverViewContent$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
         data: metricsData
     }, void 0, false, {
         fileName: "[project]/app/dashboard/admin-koprasi/page.tsx",
-        lineNumber: 38,
+        lineNumber: 46,
         columnNumber: 10
     }, this);
 }

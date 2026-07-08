@@ -81,28 +81,46 @@ class InventoryController extends Controller
     ], 200);
     }
 
-    /**
-     * 2. GET MUTATION HISTORY (Untuk Tab 'Riwayat Stok')
-     * Menampilkan semua log keluar-masuk pupuk terurut dari yang paling baru.
-     */
     public function getMutationHistory()
-    {
-        $cooperativeId = 1;
+{
+    $cooperativeId = 1;
 
-        // Ambil riwayat mutasi yang pupuknya berada di gudang koperasi ini
-        $histories = InventoryMutation::whereHas('fertilizer.warehouse', function ($query) use ($cooperativeId) {
-                $query->where('cooperative_id', $cooperativeId);
-            })
-            ->with(['fertilizer', 'farmer']) // Include data master pupuk & petani (jika ada)
-            ->latest() // Urutkan dari transaksi terbaru
-            ->get();
+    // Ambil riwayat mutasi
+    $histories = InventoryMutation::whereHas('fertilizer.warehouse', function ($query) use ($cooperativeId) {
+            $query->where('cooperative_id', $cooperativeId);
+        })
+        ->with(['fertilizer', 'farmer.user']) // Tarik relasi secara aman
+        ->latest()
+        ->get();
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $histories
-        ], 200);
-    }
+    // 💡 PROTEKSI UTAMA: Mapping agar data Seeder yang NULL tidak merusak sistem
+    $formattedHistories = $histories->map(function ($history) {
+        return [
+            'id' => $history->id,
+            'fertilizer' => $history->fertilizer,
+            'type' => $history->type,
+            'quantity_kg' => $history->quantity_kg,
+            'description' => $history->description,
+            'created_at' => $history->created_at,
+            // Jika farmer_id kosong (seperti data seeder), berikan string 'Umum / Pasokan Gudang'
+            'farmer' => $history->farmer ? [
+                'id' => $history->farmer->id,
+                'user' => [
+                    'name' => $history->farmer->user->name ?? 'Petani Tanpa Nama'
+                ]
+            ] : [
+                'user' => [
+                    'name' => 'Umum / Pasokan Lini III'
+                ]
+            ]
+        ];
+    });
 
+    return response()->json([
+        'status' => 'success',
+        'data' => $formattedHistories // Kirim data yang sudah bersih dari resiko null-pointer
+    ], 200);
+}
     /**
      * 3. POST STORE MUTATION (Aksi Form Tambah/Kurang Stok)
      * Menggunakan DB::transaction() agar data log & nominal stok sinkron tanpa risiko selisih data.

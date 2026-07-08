@@ -44,7 +44,7 @@ function Sidebar({ handleLogout }) {
         {
             name: "Petani & Lahan",
             icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fa$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["FaUserFriends"],
-            href: "/dashboard/admin-koprasi/data-petani"
+            href: "/dashboard/admin-koprasi/petani-lahan"
         },
         {
             name: "Transaksi",
@@ -562,9 +562,7 @@ const api = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axio
         'Accept': 'application/json'
     }
 });
-// Pendaftaran interseptor tidak perlu dibungkus IF window
 api.interceptors.request.use((config)=>{
-    // Pengecekan window dilakukan DI DALAM saat ingin mengakses localStorage
     if ("TURBOPACK compile-time truthy", 1) {
         const token = localStorage.getItem('access_token');
         if (token) {

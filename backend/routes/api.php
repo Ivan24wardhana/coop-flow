@@ -38,6 +38,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Endpoint CRUD Kelompok Tani
     Route::apiResource('farmer-groups', FarmerGroupController::class);
 
+    Route::post('farmers/{id}', [FarmerController::class, 'update']);
+
     // Route API CRUD Master Petani
     Route::apiResource('farmers', FarmerController::class);
 

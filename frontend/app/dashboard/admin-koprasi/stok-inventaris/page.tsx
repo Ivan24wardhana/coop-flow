@@ -12,11 +12,38 @@ export default function StokSaatIniPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("access_token")
+        : null;
+
     api
-      .get("/cooperative/inventory/overview")
+      .get("/cooperative/inventory/overview", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         if (response.data.status === "success") {
-          setData(response.data);
+          const backendData = response.data;
+
+          // 💡 SOLUSI UTAMA: Petakan nama properti agar dipahami oleh komponen Next.js kamu
+          const formattedData = {
+            summary: {
+              totalStok: backendData.summary.total_stock_kg,
+              nilaiStok: backendData.summary.total_value_idr,
+              gudangAktif: backendData.summary.active_warehouses,
+            },
+            // Menyelaraskan field stok untuk tabel utama jika dibutuhkan komponen anak
+            stocks: backendData.stocks.map((stock: any) => ({
+              ...stock,
+              stokTersedia: stock.current_stock,
+              stokMinimal: stock.minimum_stock,
+            })),
+            warehouses: backendData.warehouses,
+          };
+
+          setData(formattedData);
         }
       })
       .catch((error) => {
@@ -29,7 +56,7 @@ export default function StokSaatIniPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-100 text-zinc-500">
+      <div className="flex items-center justify-center min-h-[400px] text-zinc-500">
         Memuat data inventaris...
       </div>
     );
@@ -37,10 +64,10 @@ export default function StokSaatIniPage() {
 
   return (
     <div className="space-y-8 animate-fadeIn">
-      {/* 3 KARTU KONTEN - Menerima objek summary */}
+      {/* 3 KARTU KONTEN */}
       <InventorySummary summary={data?.summary} />
 
-      {/* TABEL UTAMA STOK - Menerima array stocks */}
+      {/* TABEL UTAMA STOK */}
       <div>
         <h2 className="text-lg font-bold text-zinc-900 mb-4">
           Daftar Ketersediaan Pupuk
@@ -48,7 +75,7 @@ export default function StokSaatIniPage() {
         <StockTable stocks={data?.stocks || []} />
       </div>
 
-      {/* PROGRESS BAR GUDANG - Menerima array data gudang */}
+      {/* PROGRESS BAR GUDANG */}
       <div>
         <h2 className="text-sm font-bold text-zinc-400 uppercase tracking-wider mb-4">
           Gudang

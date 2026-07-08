@@ -17,19 +17,31 @@ export default function DashboardOverviewPage() {
   useEffect(() => {
     async function fetchDashboardData() {
       try {
-        const response = await api.get("/cooperative/dashboard");
+        // 💡 AMBIL TOKEN REAL-TIME
+        const token =
+          typeof window !== "undefined"
+            ? localStorage.getItem("access_token")
+            : null;
+
+        // 💡 SUNTIKKAN TOKEN KE HEADERS
+        const response = await api.get("/cooperative/dashboard", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
         if (response.data.success) {
           const backendData = response.data.data;
 
-          // 💡 SOLUSI: Gabungkan objek 'metrics' dan 'chartData' ke dalam satu objek tingkat atas
           setMetricsData({
-            ...backendData.metrics, // Mengeluarkan totalPetani, luasLahan, dll
-            chartData: backendData.chartData, // Memasukkan objek chartData
+            ...backendData.metrics,
+            chartData: backendData.chartData,
           });
         }
       } catch (error) {
         console.error("Gagal mengambil data dashboard:", error);
       } finally {
+        // Berikan delay sedikit agar transisi skeleton/pulse halus
         setIsLoading(false);
       }
     }

@@ -837,9 +837,7 @@ const api = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axio
         'Accept': 'application/json'
     }
 });
-// Pendaftaran interseptor tidak perlu dibungkus IF window
 api.interceptors.request.use((config)=>{
-    // Pengecekan window dilakukan DI DALAM saat ingin mengakses localStorage
     if ("TURBOPACK compile-time truthy", 1) {
         const token = localStorage.getItem('access_token');
         if (token) {

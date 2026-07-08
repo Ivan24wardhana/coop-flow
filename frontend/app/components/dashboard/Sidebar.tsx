@@ -45,7 +45,7 @@ export default function Sidebar({ handleLogout }: SidebarProps) {
     {
       name: "Petani & Lahan",
       icon: FaUserFriends,
-      href: "/dashboard/admin-koprasi/data-petani",
+      href: "/dashboard/admin-koprasi/petani-lahan",
     },
     {
       name: "Transaksi",
