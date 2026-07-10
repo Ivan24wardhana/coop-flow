@@ -48,7 +48,7 @@ class RoleAndUserSeeder extends Seeder
 
         // --- Akun Dinas Pertanian ---
         $dinasPertanian = User::create([
-            'name' => 'Ir. Ahmad Subarjo (Dinas Pertanian)',
+            'name' => 'Ir. Ahmad Subarjo (Dinas Pertanian)',ww
             'email' => 'dinas.pertanian@go.id',
             'password' => Hash::make('password123'),
             'phone' => '081234567892',
