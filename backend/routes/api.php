@@ -7,7 +7,7 @@ use App\Http\Controllers\FarmerGroupController;
 use App\Http\Controllers\PlantController;
 use App\Http\Controllers\RegionalController;
 use App\Http\Controllers\Api\CooperativeDashboardController;
-use App\Http\Controllers\Api\Cooperative\InventoryController;
+use App\Http\Controllers\Api\InventoryController;
 use App\Http\Controllers\Api\CooperativeController; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
